@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .calculator {
+            width: 200px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .display {
+            background: #222;
+            color: #fff;
+            padding: 10px;
+            text-align: right;
+            font-size: 1.5em;
+            border-bottom: 2px solid #333;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+        }
+
+        button {
+            background: #eee;
+            border: none;
+            padding: 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            outline: none;
+        }
+
+        button.operator {
+            background: #f90;
+            color: #fff;
+        }
+
+        button.clear {
+            background: #f00;
+            color: #fff;
+        }
+
+        button.equal {
+            background: #0f0;
+            color: #fff;
+        }
+
+        button:hover {
+            background: #ddd;
+        }
+
+        button.operator:hover {
+            background: #e80;
+        }
+
+        button.clear:hover {
+            background: #c00;
+        }
+
+        button.equal:hover {
+            background: #0c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display"></div>
+        <div class="buttons">
+            <button class="btn" data-value="7">7</button>
+            <button class="btn" data-value="8">8</button>
+            <button class="btn" data-value="9">9</button>
+            <button class="btn operator" data-value="/">/</button>
+
+            <button class="btn" data-value="4">4</button>
+            <button class="btn" data-value="5">5</button>
+            <button class="btn" data-value="6">6</button>
+            <button class="btn operator" data-value="*">*</button>
+
+            <button class="btn" data-value="1">1</button>
+            <button class="btn" data-value="2">2</button>
+            <button class="btn" data-value="3">3</button>
+            <button class="btn operator" data-value="-">-</button>
+
+            <button class="btn" data-value="0">0</button>
+            <button class="btn" data-value=".">.</button>
+            <button class="btn clear" data-value="C">C</button>
+            <button class="btn operator" data-value="+">+</button>
+
+            <button class="btn equal" data-value="=">=</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const display = document.getElementById('display');
+            let currentInput = '';
+            let operator = '';
+            let operand1 = null;
+            let operand2 = null;
+
+            const updateDisplay = () => {
+                display.textContent = currentInput || '0';
+            };
+
+            const calculate = () => {
+                if (operator && operand1 !== null) {
+                    operand2 = parseFloat(currentInput);
+                    switch (operator) {
+                        case '+':
+                            currentInput = (operand1 + operand2).toString();
+                            break;
+                        case '-':
+                            currentInput = (operand1 - operand2).toString();
+                            break;
+                        case '*':
+                            currentInput = (operand1 * operand2).toString();
+                            break;
+                        case '/':
+                            currentInput = (operand1 / operand2).toString();
+                            break;
+                    }
+                    operand1 = null;
+                    operator = '';
+                }
+            };
+
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const value = button.getAttribute('data-value');
+
+                    if (button.classList.contains('operator')) {
+                        if (currentInput) {
+                            if (operand1 === null) {
+                                operand1 = parseFloat(currentInput);
+                            } else if (operator) {
+                                calculate();
+                            }
+                        }
+                        operator = value;
+                        currentInput = '';
+                    } else if (value === 'C') {
+                        currentInput = '';
+                        operand1 = null;
+                        operator = '';
+                    } else if (value === '=') {
+                        if (currentInput && operator) {
+                            calculate();
+                        }
+                    } else {
+                        currentInput += value;
+                    }
+
+                    updateDisplay();
+                });
+            });
+
+            updateDisplay();
+        });
+    </script>
+</body>
+</html>
